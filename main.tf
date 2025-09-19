@@ -59,6 +59,7 @@ resource "google_storage_bucket" "gcs_bucket" {
           split(",", lifecycle_rule.value.condition["matches_storage_class"])
         ) : null
         num_newer_versions = lookup(lifecycle_rule.value.condition, "num_newer_versions", null)
+        days_since_noncurrent_time = lookup(lifecycle_rule.value.condition, "days_since_noncurrent_time", null)
       }
     }
   }

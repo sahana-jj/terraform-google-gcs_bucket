@@ -29,7 +29,7 @@ resource "google_project_service" "storage_api" {
 resource "google_storage_bucket" "gcs_bucket" {
   name                        = local.bucket_name
   location                    = local.bucket_location
-  storage_class               = var.storage_class 
+  storage_class               = var.storage_class
   labels                      = local.bucket_labels
   uniform_bucket_level_access = local.uniform_access
   force_destroy               = false
@@ -58,8 +58,14 @@ resource "google_storage_bucket" "gcs_bucket" {
         matches_storage_class = contains(keys(lifecycle_rule.value.condition), "matches_storage_class") ? (
           split(",", lifecycle_rule.value.condition["matches_storage_class"])
         ) : null
-        num_newer_versions = lookup(lifecycle_rule.value.condition, "num_newer_versions", null)
+        matches_prefix             = lookup(lifecycle_rule.value.condition, "matches_prefix", null)
+        matches_suffix             = lookup(lifecycle_rule.value.condition, "matches_suffix", null)
+        num_newer_versions         = lookup(lifecycle_rule.value.condition, "num_newer_versions", null)
+        custom_time_before         = lookup(lifecycle_rule.value.condition, "custom_time_before", null)
+        days_since_custom_time     = lookup(lifecycle_rule.value.condition, "days_since_custom_time", null)
         days_since_noncurrent_time = lookup(lifecycle_rule.value.condition, "days_since_noncurrent_time", null)
+        noncurrent_time_before     = lookup(lifecycle_rule.value.condition, "noncurrent_time_before", null)
+
       }
     }
   }

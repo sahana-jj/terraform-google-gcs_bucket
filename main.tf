@@ -65,7 +65,6 @@ resource "google_storage_bucket" "gcs_bucket" {
         days_since_custom_time     = lookup(lifecycle_rule.value.condition, "days_since_custom_time", null)
         days_since_noncurrent_time = lookup(lifecycle_rule.value.condition, "days_since_noncurrent_time", null)
         noncurrent_time_before     = lookup(lifecycle_rule.value.condition, "noncurrent_time_before", null)
-
       }
     }
   }

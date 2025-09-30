@@ -82,11 +82,8 @@ variable "labels" {
 
 variable "lifecycle_rules" {
   description = "List of lifecycle rules to configure. Accepts action.type, action.storage_class, condition.age, condition.created_before, condition.with_state, condition.matches_storage_class, condition.num_newer_versions. Format is same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket.html#lifecycle_rule. Except condition.matches_storage_class should be a comma delimited string."
-  type = set(object({
-    action    = map(string)
-    condition = map(string)
-  }))
-  default = []
+  type        = any
+  default     = []
 }
 
 variable "lb_ssl_certs" {

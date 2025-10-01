@@ -40,3 +40,43 @@ This upgrade will rename the load-balancer resource(s) for them to be coherently
 # Upgrade guide from v2.0.1 to v2.1.0
 
 First make sure you've planned & applied `v2.0.1`. Then, upon upgrading from `v2.0.1` to `v2.1.0`, you may (or may not) see a plan that destroys & creates an equal number of `google_storage_bucket_iam_member` resources. It is OK to apply these changes as it will only change the data-structure of these resources [from an array to a hashmap](https://github.com/airasia/terraform-google-external_access/wiki/The-problem-of-%22shifting-all-items%22-in-an-array). Note that, after you plan & apply these changes, you may (or may not) get a **"Provider produced inconsistent result after apply"** error. Just re-plan and re-apply and that would resolve the error.
+
+## Lifecycle Rules
+
+The `lifecycle_rules` variable allows you to configure object lifecycle management policies for the GCS bucket. This enables automatic deletion or storage class transitions based on various conditions.
+
+### Structure
+```hcl
+lifecycle_rules = [
+  {
+    action = {
+      type          = string  # Required: "Delete" or "SetStorageClass"
+      storage_class = string  # Optional: Required only when type is "SetStorageClass"
+                             # Valid values: "STANDARD", "NEARLINE", "COLDLINE", "ARCHIVE"
+    }
+    condition = {
+      # Age-based conditions
+      age                        = number  # Optional: Age of object in days
+      created_before             = string  # Optional: Date in RFC 3339 format (e.g., "2024-01-15")
+      
+      # Version-based conditions
+      with_state                 = string  # Optional: "LIVE", "ARCHIVED", or "ANY"
+      num_newer_versions         = number  # Optional: Number of newer versions to keep
+      
+      # Time-based conditions
+      custom_time_before         = string  # Optional: Date in RFC 3339 format
+      days_since_custom_time     = number  # Optional: Days since custom time
+      days_since_noncurrent_time = number  # Optional: Days since object became noncurrent
+      noncurrent_time_before     = string  # Optional: Date in RFC 3339 format
+      
+      # Prefix/Suffix matching (accepts list of strings)
+      matches_prefix             = list(string)  # Optional: List of object name prefixes to match
+      matches_suffix             = list(string)  # Optional: List of object name suffixes to match
+      
+      # Storage class matching
+      matches_storage_class      = list(string)  # Optional: List of storage classes to match
+    }
+  }
+]
+```
+
